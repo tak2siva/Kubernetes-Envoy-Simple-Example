@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+    name: app1
+spec:
+    selector:
+        matchLabels:
+            app: app1
+            tier: backend
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: app1
+                tier: backend
+        spec:
+            containers:
+              - name: app1
+                image: tak2siva/k8s_app1:latest
+                ports:
+                  - name: http
+                    containerPort: 4567

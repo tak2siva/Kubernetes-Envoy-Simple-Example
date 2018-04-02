@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: app2
+spec:
+  selector:
+    app: app2
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 4568
+    nodePort: 30006
+  type: NodePort
