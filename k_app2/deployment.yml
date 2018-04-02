@@ -20,5 +20,10 @@ spec:
           ports:
             - name: http
               containerPort: 4568
-
-
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/my-config/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: special-config
