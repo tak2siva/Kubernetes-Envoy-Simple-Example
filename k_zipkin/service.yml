@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: zipkin
+spec:
+  selector:
+    app: zipkin
+    tier: monitor
+  ports:
+  - protocol: TCP
+    name: http
+    port: 9411
+    nodePort: 30011
+  type: NodePort
