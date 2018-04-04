@@ -8,9 +8,9 @@
           "config": {
             "codec_type": "auto",
             "stat_prefix": "ingress_http",
-            "generate_request_id": true,
+            "generate_request_id": false,
             "tracing": {
-              "operation_name": "egress"
+              "operation_name": "ingress"
             },
             "route_config": {
               "virtual_hosts": [
