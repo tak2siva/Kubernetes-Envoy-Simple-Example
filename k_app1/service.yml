@@ -8,6 +8,6 @@ spec:
     tier: backend
   ports:
   - protocol: TCP
-    port: 4567
+    port: 80
     nodePort: 30005
   type: NodePort

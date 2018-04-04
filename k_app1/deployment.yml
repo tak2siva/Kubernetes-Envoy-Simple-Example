@@ -20,3 +20,17 @@ spec:
                 ports:
                   - name: http
                     containerPort: 4567
+              - name: envoy-sidecar
+                image: tak2siva/k8s_front_envoy:latest
+                ports:
+                  - name: http
+                    containerPort: 80
+                volumeMounts:
+                  - name: config-volume
+                    mountPath: /etc/my-config/
+                command: ["/usr/local/bin/envoy"]
+                args: ["-c", "/etc/my-config/sidecar-envoy.json", "--service-cluster", "app1-sidecar"]
+            volumes:
+              - name: config-volume
+                configMap:
+                  name: app1-sidecar-config

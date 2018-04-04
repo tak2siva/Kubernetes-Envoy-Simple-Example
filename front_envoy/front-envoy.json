@@ -56,7 +56,7 @@
             "lb_type": "round_robin",
             "hosts": [
                {
-                  "url": "tcp://app1:4567"
+                  "url": "tcp://app1:80"
                }
             ]
          },

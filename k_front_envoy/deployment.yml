@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app2
-          image: tak2siva/k8s_front_envoy:v1.4
+          image: tak2siva/k8s_front_envoy:latest
           ports:
             - name: http
               containerPort: 80
