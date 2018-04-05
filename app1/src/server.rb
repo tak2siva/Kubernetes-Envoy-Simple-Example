@@ -2,6 +2,9 @@ require 'sinatra'
 require "open-uri"
 require "faraday"
 
+require "grpc"
+require "./hello_services_pb"
+
 set :bind, '0.0.0.0'
 set :port, 4567
 
@@ -38,3 +41,25 @@ get '/test' do
 		return "Exception #{e}"
 	end
 end
+
+
+
+############### GRPC Stuff ##############################
+
+
+class HelloServer < Hello::Service
+    def ping content,  _unused_call
+        puts "Req body: #{content.value}"
+        Content.new(value: "Hello from grpc - app1")
+    end
+end
+
+def grpc_server
+    s = GRPC::RpcServer.new 
+    s.add_http2_port('0.0.0.0:50051', :this_port_is_insecure)
+    s.handle(HelloServer)
+    puts "Starting grpc server in port 50051.."
+    s.run_till_terminated
+end
+
+Thread.new { grpc_server }
