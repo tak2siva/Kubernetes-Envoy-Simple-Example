@@ -28,7 +28,7 @@ spec:
           # command: ["tail"]
           # args: ["-f", "/dev/null"]
           command: ["/usr/local/bin/envoy"]
-          args: ["-c", "/etc/my-config/front-envoy.json", "--service-cluster", "front-proxy"]
+          args: ["-c", "/etc/my-config/front-envoy.json", "--service-cluster", "front-proxy", "--v2-config-only"]
       volumes:
         - name: envoy-config-volume
           configMap:

@@ -15,4 +15,7 @@ spec:
     name: admin
     port: 8001
     nodePort: 30081
+  - port: 50053
+    name: grpc
+    nodePort: 30053
   type: NodePort

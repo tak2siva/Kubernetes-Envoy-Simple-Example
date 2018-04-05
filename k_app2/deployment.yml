@@ -26,7 +26,7 @@ spec:
             - name: config-volume
               mountPath: /etc/my-config/
           command: ["/usr/local/bin/envoy"]
-          args: ["-c", "/etc/my-config/sidecar-envoy.json", "--service-cluster", "app2-sidecar"]
+          args: ["-c", "/etc/my-config/sidecar-envoy.json", "--service-cluster", "app2-sidecar", "--v2-config-only"]
       volumes:
         - name: config-volume
           configMap:

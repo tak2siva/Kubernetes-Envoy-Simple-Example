@@ -1,152 +1,188 @@
 {
-   "listeners": [
+  "admin": {
+    "access_log_path": "/tmp/admin_access.log",
+    "address": {
+      "socket_address": {
+        "address": "127.0.0.1",
+        "port_value": 9901
+      }
+    }
+  },
+  "tracing": {
+    "http": {
+      "name": "envoy.zipkin",
+      "config": {
+        "collector_cluster": "zipkin",
+        "collector_endpoint": "/api/v1/spans"
+      }
+    }
+  },
+  "static_resources": {
+    "listeners": [
       {
-         "address": "tcp://0.0.0.0:80",
-              "filters": [
-               {
-                  "name": "http_connection_manager",
-                  "config": {
-                     "codec_type": "auto",
-                     "stat_prefix": "ingress_http",
-                     "generate_request_id": true,
-                     "tracing": {
-                        "operation_name": "egress"
-                     },
-                     "route_config": {
-                        "virtual_hosts": [
-                           {
-                              "name": "frontend",
-                              "domains": [
-                                 "*"
-                              ],
-                              "routes": [
-                                 {
-                                     "timeout_ms": 0,
-                                     "prefix": "/app/1",
-                                     "cluster": "app1",
-                                     "prefix_rewrite": "/"
-                                 },
-                                 {
-                                     "timeout_ms": 0,
-                                     "prefix": "/app/2",
-                                     "cluster": "app2",
-                                     "prefix_rewrite": "/"
-                                 }
-                              ]
-                           }
+        "name": "http_listener",
+        "address": {
+          "socket_address": {
+            "address": "0.0.0.0",
+            "port_value": 80
+          }
+        },
+        "filter_chains": [
+          {
+            "filters": [
+              {
+                "name": "envoy.http_connection_manager",
+                "config": {
+                  "stat_prefix": "ingress_http",
+                  "codec_type": "AUTO",
+                  "generate_request_id": true,
+                  "tracing": {
+                    "operation_name": "egress"
+                  },
+                  "route_config": {
+                    "name": "local_route",
+                    "virtual_hosts": [
+                      {
+                        "name": "app1_http",
+                        "domains": [
+                          "*"
+                        ],
+                        "routes": [
+                          {
+                            "match": {
+                              "prefix": "/app/1"
+                            },
+                            "route": {
+                              "cluster": "local_service",
+                              "prefix_rewrite": "/"
+                            }
+                          }
                         ]
-                     },
-                     "filters": [
-                        {
-                           "name": "router",
-                           "config": {}
-                        }
-                     ]
-                  }
-               }
+                      }
+                    ]
+                  },
+                  "http_filters": [
+                    {
+                      "name": "envoy.router"
+                    }
+                  ]
+                }
+              }
             ]
+          }
+        ]
       },
       {
-         "address": "tcp://0.0.0.0:50051",
-              "filters": [
-               {
-                  "name": "http_connection_manager",
-                  "config": {
-                     "codec_type": "auto",
-                     "stat_prefix": "ingress_http",
-                     "generate_request_id": true,
-                     "tracing": {
-                        "operation_name": "egress"
-                     },
-                     "route_config": {
-                        "virtual_hosts": [
-                           {
-                              "name": "frontend_grpc",
-                              "domains": [
-                                 "*"
-                              ],
-                              "routes": [
-                                 {
-                                     "timeout_ms": 0,
-                                     "prefix": "/",
-                                     "cluster": "app1_grpc"
-                                 }
-                              ]
-                           }
+        "name": "grpc_listener",
+        "address": {
+          "socket_address": {
+            "address": "0.0.0.0",
+            "port_value": 50053
+          }
+        },
+        "filter_chains": [
+          {
+            "filters": [
+              {
+                "name": "envoy.http_connection_manager",
+                "config": {
+                  "stat_prefix": "ingress_http",
+                  "generate_request_id": true,
+                  "codec_type": "AUTO",
+                  "tracing": {
+                    "operation_name": "egress"
+                  },
+                  "route_config": {
+                    "name": "local_grpc",
+                    "virtual_hosts": [
+                      {
+                        "name": "app1_grpc",
+                        "domains": [
+                          "*"
+                        ],
+                        "routes": [
+                          {
+                            "match": {
+                              "prefix": "/"
+                            },
+                            "route": {
+                              "cluster": "local_grpc"
+                            }
+                          }
                         ]
-                     },
-                     "filters": [
-                        {
-                           "name": "grpc_web",
-                           "config": {}
-                        }
-                     ]
-                  }
-               }
+                      }
+                    ]
+                  },
+                  "http_filters": [
+                    {
+                      "name": "envoy.router"
+                    }
+                  ]
+                }
+              }
             ]
+          }
+        ]
       }
-   ],
-   "cluster_manager": {
-      "clusters": [
-         {
-            "name": "app1",
-            "connect_timeout_ms": 1,
-            "type": "strict_dns",
-            "lb_type": "round_robin",
-            "hosts": [
-               {
-                  "url": "tcp://app1:80"
-               }
-            ]
-         },
-         {
-            "name": "app1_grpc",
-            "connect_timeout_ms": 1,
-            "type": "strict_dns",
-            "lb_type": "round_robin",
-            "hosts": [
-               {
-                  "url": "tcp://app1:50051"
-               }
-            ]
-         },
-         {
-            "name": "app2",
-            "connect_timeout_ms": 1,
-            "type": "strict_dns",
-            "lb_type": "round_robin",
-            "hosts": [
-               {
-                  "url": "tcp://app2:4568"
-               }
-            ]
-         },
-         {
-            "name": "zipkin",
-            "connect_timeout_ms": 1,
-            "type": "strict_dns",
-            "lb_type": "round_robin",
-            "hosts": [
-               {
-                  "url": "tcp://zipkin:9411"
-               }
-            ]
-         }
-      ]
-   },
-   "admin": {
-      "access_log_path": "/var/log/envoy.log",
-      "address": "tcp://0.0.0.0:8001"
-   },
-   "tracing": {
-      "http": {
-         "driver": {
-            "type": "zipkin",
-            "config": {
-               "collector_cluster": "zipkin",
-               "collector_endpoint": "/api/v1/spans"
+    ],
+    "clusters": [
+      {
+        "name": "local_service",
+        "connect_timeout": "0.25s",
+        "type": "strict_dns",
+        "lb_policy": "ROUND_ROBIN",
+        "hosts": [
+          {
+            "socket_address": {
+              "address": "app1",
+              "port_value": 80
             }
-         }
+          }
+        ]
+      },
+      {
+        "name": "local_grpc",
+        "connect_timeout": "0.25s",
+        "type": "strict_dns",
+        "lb_policy": "ROUND_ROBIN",
+        "http2_protocol_options": {},
+        "hosts": [
+          {
+            "socket_address": {
+              "address": "app1",
+              "port_value": 50052
+            }
+          }
+        ]
+      },
+      {
+        "name": "app2",
+        "connect_timeout": "0.25s",
+        "type": "strict_dns",
+        "lb_policy": "ROUND_ROBIN",
+        "hosts": [
+          {
+            "socket_address": {
+              "address": "app2",
+              "port_value": 80
+            }
+          }
+        ]
+      },
+      {
+        "name": "zipkin",
+        "connect_timeout": "0.25s",
+        "type": "strict_dns",
+        "lb_policy": "ROUND_ROBIN",
+        "hosts": [
+          {
+            "socket_address": {
+              "address": "zipkin",
+              "port_value": 9411
+            }
+          }
+        ]
       }
-   }
+    ]
+  }
 }
