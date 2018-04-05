@@ -9,5 +9,9 @@ spec:
   ports:
   - protocol: TCP
     port: 80
+    name: http
     nodePort: 30006
+  - port: 50062
+    name: grpc
+    nodePort: 30062
   type: NodePort

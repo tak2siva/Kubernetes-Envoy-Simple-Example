@@ -46,11 +46,31 @@ end
 
 ############### GRPC Stuff ##############################
 
+GRPC_HEADERS = ['x-b3-traceid', 'x-b3-spanid', 'x-b3-sampled', 'x-b3-parentspanid', 'x-b3-flags', 'x-request-id']
 
 class HelloServer < Hello::Service
     def ping content,  _unused_call
         puts "Req body: #{content.value}"
-        Content.new(value: "Hello from grpc - app1")
+
+        meta = {}
+        GRPC_HEADERS.each {|x|
+            meta[x] = _unused_call.metadata[x].to_s if _unused_call.metadata[x]
+        }
+
+        resp = ""
+        puts "headers: #{_unused_call.metadata}\n\n"
+        puts "my: #{meta}\n\n"
+        # resp = "Meta: #{_unused_call.metadata}\n\n"
+        # resp += "My Meta: #{meta}\n\n"
+
+        begin
+            stub = Hello::Stub.new('0.0.0.0:9001', :this_channel_is_insecure)
+            resp += stub.ping(Content.new(value: "Hello from client"), {metadata: meta}).value
+        rescue Exception => e
+            resp += e
+        end
+
+        Content.new(value: "Hello from grpc - app1 \n Response from app2: #{resp.to_s}")
     end
 end
 
