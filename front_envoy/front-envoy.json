@@ -45,6 +45,45 @@
                   }
                }
             ]
+      },
+      {
+         "address": "tcp://0.0.0.0:50051",
+              "filters": [
+               {
+                  "name": "http_connection_manager",
+                  "config": {
+                     "codec_type": "auto",
+                     "stat_prefix": "ingress_http",
+                     "generate_request_id": true,
+                     "tracing": {
+                        "operation_name": "egress"
+                     },
+                     "route_config": {
+                        "virtual_hosts": [
+                           {
+                              "name": "frontend_grpc",
+                              "domains": [
+                                 "*"
+                              ],
+                              "routes": [
+                                 {
+                                     "timeout_ms": 0,
+                                     "prefix": "/",
+                                     "cluster": "app1_grpc"
+                                 }
+                              ]
+                           }
+                        ]
+                     },
+                     "filters": [
+                        {
+                           "name": "grpc_web",
+                           "config": {}
+                        }
+                     ]
+                  }
+               }
+            ]
       }
    ],
    "cluster_manager": {
@@ -57,6 +96,17 @@
             "hosts": [
                {
                   "url": "tcp://app1:80"
+               }
+            ]
+         },
+         {
+            "name": "app1_grpc",
+            "connect_timeout_ms": 1,
+            "type": "strict_dns",
+            "lb_type": "round_robin",
+            "hosts": [
+               {
+                  "url": "tcp://app1:50051"
                }
             ]
          },

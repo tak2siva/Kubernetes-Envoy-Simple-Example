@@ -20,6 +20,8 @@ spec:
                 ports:
                   - name: http
                     containerPort: 4567
+                  - name: grpc
+                    containerPort: 50051
               - name: envoy-sidecar
                 image: tak2siva/k8s_front_envoy:latest
                 ports:
@@ -29,7 +31,7 @@ spec:
                   - name: config-volume
                     mountPath: /etc/my-config/
                 command: ["/usr/local/bin/envoy"]
-                args: ["-c", "/etc/my-config/sidecar-envoy.json", "--service-cluster", "app1-sidecar"]
+                args: ["-c", "/etc/my-config/sidecar-envoy.json", "--service-cluster", "app1-sidecar", "--v2-config-only"]
             volumes:
               - name: config-volume
                 configMap:
