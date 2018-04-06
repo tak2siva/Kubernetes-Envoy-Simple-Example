@@ -1,5 +1,5 @@
-(cd front_envoy; docker build -t tak2siva/k8s_front_envoy:latest .)
-(cd front_envoy; docker push tak2siva/k8s_front_envoy:latest)
+(cd front_envoy; docker build -t $FPROXY_IMAGE:latest .)
+#(cd front_envoy; docker push $FPROXY_IMAGE:latest)
 
 kubectl delete deployments front-envoy
 kubectl delete service front-envoy

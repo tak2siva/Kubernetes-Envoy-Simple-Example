@@ -16,14 +16,16 @@ spec:
         spec:
             containers:
               - name: app1
-                image: tak2siva/k8s_app1:latest
+                image: k8s_app1:latest
+                imagePullPolicy: Never
                 ports:
                   - name: http
                     containerPort: 4567
                   - name: grpc
                     containerPort: 50051
               - name: envoy-sidecar
-                image: tak2siva/k8s_front_envoy:latest
+                image: k8s_front_proxy:latest
+                imagePullPolicy: Never
                 ports:
                   - name: http
                     containerPort: 80

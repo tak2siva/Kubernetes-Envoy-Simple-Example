@@ -1,5 +1,5 @@
-(cd app2; docker build -t tak2siva/k8s_app2:latest .)
-(cd app2; docker push tak2siva/k8s_app2:latest)
+(cd app2; docker build -t $APP2_IMAGE:latest .)
+#(cd app2; docker push $APP2_IMAGE:latest)
 
 kubectl delete deployments app2
 kubectl delete service app2

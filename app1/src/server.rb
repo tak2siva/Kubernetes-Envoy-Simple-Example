@@ -25,7 +25,7 @@ end
 
 
 get '/ping' do
-	"pong from app1 -- #{request.env}"
+	"pong from app1\n"
 end
 
 get '/test' do

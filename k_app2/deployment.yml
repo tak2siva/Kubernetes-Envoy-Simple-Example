@@ -16,9 +16,11 @@ spec:
     spec:
       containers:
         - name: app2
-          image: tak2siva/k8s_app2:latest
+          image: k8s_app2:latest
+          imagePullPolicy: Never
         - name: envoy-sidecar
-          image: envoyproxy/envoy:latest
+          image: k8s_front_proxy:latest
+          imagePullPolicy: Never
           ports:
             - name: http
               containerPort: 80
