@@ -35,7 +35,7 @@
                 "config": {
                   "stat_prefix": "ingress_http",
                   "codec_type": "AUTO",
-                  "generate_request_id": false,
+                  "generate_request_id": true,
                   "tracing": {
                     "operation_name": "egress"
                   },
@@ -50,10 +50,11 @@
                         "routes": [
                           {
                             "match": {
-                              "prefix": "/"
+                              "prefix": "/app/1"
                             },
                             "route": {
-                              "cluster": "local_service"
+                              "cluster": "local_service",
+                              "prefix_rewrite": "/"
                             }
                           }
                         ]
@@ -76,7 +77,7 @@
         "address": {
           "socket_address": {
             "address": "0.0.0.0",
-            "port_value": 50062
+            "port_value": 50053
           }
         },
         "filter_chains": [
@@ -86,7 +87,7 @@
                 "name": "envoy.http_connection_manager",
                 "config": {
                   "stat_prefix": "ingress_http",
-                  "generate_request_id": false,
+                  "generate_request_id": true,
                   "codec_type": "AUTO",
                   "tracing": {
                     "operation_name": "egress"
@@ -95,7 +96,7 @@
                     "name": "local_grpc",
                     "virtual_hosts": [
                       {
-                        "name": "app2_grpc",
+                        "name": "app1_grpc",
                         "domains": [
                           "*"
                         ],
@@ -133,8 +134,8 @@
         "hosts": [
           {
             "socket_address": {
-              "address": "127.0.0.1",
-              "port_value": 4568
+              "address": "app1",
+              "port_value": 80
             }
           }
         ]
@@ -148,8 +149,22 @@
         "hosts": [
           {
             "socket_address": {
-              "address": "127.0.0.1",
-              "port_value": 50061
+              "address": "app1",
+              "port_value": 50052
+            }
+          }
+        ]
+      },
+      {
+        "name": "app2",
+        "connect_timeout": "0.25s",
+        "type": "strict_dns",
+        "lb_policy": "ROUND_ROBIN",
+        "hosts": [
+          {
+            "socket_address": {
+              "address": "app2",
+              "port_value": 80
             }
           }
         ]

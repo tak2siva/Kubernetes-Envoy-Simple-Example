@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app2-sidecar-config
+data:
+  proxy-config: |
+    {{.Files.Get "envoy.json"}}

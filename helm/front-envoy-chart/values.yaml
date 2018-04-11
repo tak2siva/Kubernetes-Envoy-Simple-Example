@@ -1,0 +1,28 @@
+# Default values for xds-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+name: front-envoy
+tier: backend
+replicaCount: 1
+
+Envoy:
+  name: front-envoy
+  image: k8s_front_proxy:latest
+  http_port: 80
+  admin_port: 8001
+  imagePullPolicy: Never
+
+service:
+  type: NodePort
+  http:
+    port: 80
+    nodePort: 30006
+  grpc:
+    port: 50062
+    nodePort: 30053
+  admin:
+    port: 8001
+    nodePort: 30081
+
+configMap: front-envoy-config

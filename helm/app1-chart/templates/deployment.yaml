@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+    name: {{ .Values.name }}
+spec:
+    selector:
+        matchLabels:
+            app: {{ .Values.name }}
+            tier: {{ .Values.tier }}
+    replicas: {{ .Values.replicaCount }}
+    template:
+        metadata:
+            labels:
+                app: {{ .Values.name }}
+                tier: {{ .Values.tier }}
+        spec:
+            containers:
+              - name: {{ .Values.App.name }}
+                image: {{ .Values.App.image }}
+                imagePullPolicy: {{ .Values.App.imagePullPolicy }}
+                ports:
+                  - name: http
+                    containerPort: {{ .Values.App.http_port }}
+                  - name: grpc
+                    containerPort: {{ .Values.App.grpc_port }}
+              - name: {{ .Values.Envoy.name }}
+                image: {{ .Values.Envoy.image }}
+                imagePullPolicy: {{ .Values.Envoy.imagePullPolicy }}
+                ports:
+                  - name: http
+                    containerPort: {{ .Values.Envoy.http_port }}
+                volumeMounts:
+                  - name: config-volume
+                    mountPath: /etc/my-config/
+                command: ["/usr/local/bin/envoy"]
+                args: ["-c", "/etc/my-config/config.json", "--service-cluster", "app1-sidecar", "--v2-config-only", "-l", "trace"]
+                #command: ["tail"]
+                #args: ["-f", "/dev/null"]
+            volumes:
+              - name: config-volume
+                configMap:
+                  name: {{ .Values.configMap }}
+                  items:
+                    - key: proxy-config
+                      path: config.json

@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Values.name }}
+spec:
+  selector:
+    app: {{ .Values.name }}
+    tier: {{ .Values.tier }}
+  ports:
+  - protocol: TCP
+    port: {{ .Values.service.http.port }}
+    name: http
+    nodePort: {{ .Values.service.http.nodePort }}
+  - port: {{ .Values.service.grpc.port }}
+    name: grpc
+    nodePort: {{ .Values.service.grpc.nodePort }}
+  - port: {{ .Values.service.admin.port }}
+    name: admin
+    nodePort: {{ .Values.service.admin.nodePort }}
+  type: {{ .Values.service.type }}

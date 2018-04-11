@@ -1,0 +1,29 @@
+# Default values for xds-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+name: app2
+tier: backend
+replicaCount: 1
+App:
+  name: app2
+  image: k8s_app2:latest
+  http_port: 4568
+  grpc_port: 50061
+  imagePullPolicy: Never
+Envoy:
+  name: envoy-sidecar
+  image: k8s_front_proxy:latest
+  http_port: 80
+  imagePullPolicy: Never
+
+service:
+  type: NodePort
+  http:
+    port: 80
+    nodePort: 30007
+  grpc:
+    port: 50062
+    nodePort: 30054
+
+configMap: app2-sidecar-config

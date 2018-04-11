@@ -1,0 +1,10 @@
+# Default values for xds-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+name: zipkin
+tier: monitor
+replicaCount: 1
+image: openzipkin/zipkin
+port: 9411
+nodePort: 30011
