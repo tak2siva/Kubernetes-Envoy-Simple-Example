@@ -5,35 +5,10 @@ Install minikube on your machine
 ### Setup
 
 ```
-export FPROXY_IMAGE="k8s_front_proxy"
-export APP1_IMAGE="k8s_app1"
-export APP2_IMAGE="k8s_app2"
+helm upgrade --install front-envoy helm/front-envoy-chart
+helm upgrade --install app1 helm/app1-chart
+helm upgrade --install app2 helm/app2-chart
 ```
-
-On the project directory run
-```
-eval $(minikube docker-env)
-```
-
-To start all services
-```
-sh start.sh
-```
-
-Check if all the pods are running.
-
-To stop all services
-```
-sh stop.sh
-```
-
-To restart individiual services
-```
-sh front_envoy.sh
-sh app1.sh
-sh app2.sh
-```
-
 ## Req Tracing
 #### HTTP
 
@@ -70,7 +45,7 @@ Install grpc ruby tools
 
 Change dir
 ```
-cd app1/src/
+cd client/src/
 ```
 
 Change the ip address to match your NODE_IP in `grpc_client.rb`
