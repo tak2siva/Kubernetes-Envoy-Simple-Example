@@ -8,10 +8,10 @@ replicaCount: 1
 
 Envoy:
   name: front-envoy
-  image: tak2siva/k8s_front_envoy:latest
+  image: k8s_front_envoy:latest
   http_port: 80
   admin_port: 8001
-  imagePullPolicy: Always
+  imagePullPolicy: Never
 
 service:
   type: NodePort

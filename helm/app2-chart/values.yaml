@@ -7,15 +7,15 @@ tier: backend
 replicaCount: 1
 App:
   name: app2
-  image: tak2siva/k8s_app2:latest
+  image: k8s_app2:latest
   http_port: 4568
   grpc_port: 50061
-  imagePullPolicy: Always
+  imagePullPolicy: Never
 Envoy:
   name: envoy-sidecar
-  image: tak2siva/k8s_front_envoy:latest
+  image: k8s_front_envoy:latest
   http_port: 80
-  imagePullPolicy: Always
+  imagePullPolicy: Never
 
 service:
   type: NodePort

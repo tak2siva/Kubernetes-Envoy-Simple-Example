@@ -17,4 +17,6 @@ spec:
   - port: 4567
     name: debug
     nodePort: 30003
+  - port: 9901
+    name: envoyadmin
   type: {{ .Values.service.type }}

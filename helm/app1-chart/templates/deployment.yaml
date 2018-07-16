@@ -23,17 +23,23 @@ spec:
                     containerPort: {{ .Values.App.http_port }}
                   - name: grpc
                     containerPort: {{ .Values.App.grpc_port }}
+              - name: golang
+                image: k8s_job:latest
+                imagePullPolicy: Never
+                command: ["sh","-c","while true; do sleep 1000; done"]
               - name: {{ .Values.Envoy.name }}
                 image: {{ .Values.Envoy.image }}
                 imagePullPolicy: {{ .Values.Envoy.imagePullPolicy }}
                 ports:
                   - name: http
                     containerPort: {{ .Values.Envoy.http_port }}
+                  - name: envoyadmin
+                    containerPort: 9901
                 volumeMounts:
                   - name: config-volume
                     mountPath: /etc/my-config/
                 command: ["/usr/local/bin/envoy"]
-                args: ["-c", "/etc/my-config/config.json", "--service-cluster", "app1-sidecar", "--v2-config-only", "-l", "trace"]
+                args: ["-c", "/etc/my-config/config.json", "--service-cluster", "app1-sidecar", "--v2-config-only", "-l", "trace", "--drain-time-s", "10"]
                 #command: ["tail"]
                 #args: ["-f", "/dev/null"]
             volumes:
